@@ -1,7 +1,7 @@
 Name Age Address
- Amber-Rose Bowen 53    123 Machinery Rd.
-asfasf Joyce Kirkland 19 234 Cylinder Dr.
-2 Seb Dotson 32 3456 Surgery Ln.
+Amber-Rose Bowen 53    123 Machinery Rd.
+Joyce Kirkland 19 234 Cylinder Dr.
+Seb Dotson 32 3456 Surgery Ln.
 Dominique Hough 58 654 Election Rd.
 Yasemin McPleod 29 555 Cabinet Ave.
 Nancy Lord 80       232 Highway Rd.
