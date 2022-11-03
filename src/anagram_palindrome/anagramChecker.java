@@ -12,7 +12,28 @@ public class anagramChecker {
         Scanner scan = new Scanner(System.in);
         while (true) {
             System.out.print(">>> ");
+            String cmd = scan.next().toLowerCase();
 
+            switch (cmd) {
+                case "a":
+                case "anagram":
+                    String word1 = scan.next(), word2 = scan.next();
+                    if (checkAnagram(word1,word2)) {
+                        System.out.printf("%s And %s Are Anagrams%n",word1,word2);
+                        continue;
+                    }
+                case "p":
+                case "palindrome":
+                    String word = scan.next();
+                    if (checkPalindrome(word)) {
+                        System.out.printf("%s Is A Palindrome%n",word);
+                        continue;
+                    }
+                case "q":
+                case "quit":
+                    break;
+            }
+            scan.nextLine();
         }
     }
 
