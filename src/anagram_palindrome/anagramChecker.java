@@ -10,6 +10,7 @@ public class anagramChecker {
                 > (q)uit (): exit program""";
         System.out.println(HELP);
         Scanner scan = new Scanner(System.in);
+        END:
         while (true) {
             System.out.print(">>> ");
             String cmd = scan.next().toLowerCase();
@@ -19,19 +20,24 @@ public class anagramChecker {
                 case "anagram":
                     String word1 = scan.next(), word2 = scan.next();
                     if (checkAnagram(word1,word2)) {
-                        System.out.printf("%s And %s Are Anagrams%n",word1,word2);
-                        continue;
+                        System.out.printf("`%s` And `%s` Are Anagrams%n",word1,word2);
                     }
+                    else {System.out.printf("`%s` And `%s` Are Not Anagrams%n",word1,word2);}
+                    break;
                 case "p":
                 case "palindrome":
                     String word = scan.next();
                     if (checkPalindrome(word)) {
-                        System.out.printf("%s Is A Palindrome%n",word);
-                        continue;
+                        System.out.printf("`%s` Is A Palindrome%n",word);
                     }
+                    else {System.out.printf("`%s` Is Not A Palindrome%n",word);}
+                    break;
                 case "q":
                 case "quit":
-                    break;
+                    System.out.printf("Ending Process%n");
+                    break END;
+                default:
+                    System.out.printf("%s Is Not A Command%n",cmd);
             }
             scan.nextLine();
         }
@@ -51,7 +57,6 @@ public class anagramChecker {
     }
     public static boolean checkPalindrome(String word1) {
         char[] wordArray = word1.toCharArray();
-        int last_post = wordArray.length-1;
         for (int i=0;i<(wordArray.length/2);i++) {
             char c = wordArray[i];
             char nc = wordArray[wordArray.length-1-i];
