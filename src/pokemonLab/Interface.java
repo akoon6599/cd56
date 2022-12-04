@@ -33,31 +33,56 @@ public class Interface {
             }
         }
 
-        while (true) {
+        MAIN: while (true) {
             int minStat = (30 + (new Random().nextInt(0,5 )*StarterPoke.getLevel()));
             int maxStat = (35 + (new Random().nextInt(0,5 )*StarterPoke.getLevel()));
             String enemyType = new String[]{"Leaf", "Fire", "Water"}[new Random().nextInt(0,3)];
             Pokemon EnemyPokemon = new Pokemon(0,0,0,0,"NULL");
             switch (enemyType) {
                 case "Leaf" -> EnemyPokemon = new Bulbasaur(new Random().nextInt(minStat,maxStat),
-                        new Random().nextInt(minStat,maxStat+1),
-                        new Random().nextInt(minStat,maxStat+1),
+                        (int)(new Random().nextInt(minStat,maxStat+1)*(1/3f)),
+                        (int)(new Random().nextInt(minStat,maxStat+1)*(1/4f)),
                         new Random().nextInt(StarterPoke.getLevel()-5, StarterPoke.getLevel())+4);
                 case "Water" -> EnemyPokemon = new Seel(new Random().nextInt(minStat,maxStat),
-                        new Random().nextInt(minStat,maxStat+1),
-                        new Random().nextInt(minStat,maxStat+1),
-                        new Random().nextInt(StarterPoke.getLevel()-5,StarterPoke.getLevel()+4));
+                        (int)(new Random().nextInt(minStat,maxStat+1)*(1/3f)),
+                        (int)(new Random().nextInt(minStat,maxStat+1)*(1/4f)),
+                        Math.max(new Random().nextInt(StarterPoke.getLevel()-5,StarterPoke.getLevel()+4),1));
                 case "Fire" -> EnemyPokemon = new Ponyta(new Random().nextInt(minStat,maxStat),
-                        new Random().nextInt(minStat,maxStat+1),
-                        new Random().nextInt(minStat,maxStat+1),
-                        new Random().nextInt(StarterPoke.getLevel()-5,StarterPoke.getLevel()+4));
+                        (int)(new Random().nextInt(minStat,maxStat+1)*(1/3f)),
+                        (int)(new Random().nextInt(minStat,maxStat+1)*(1/4f)),
+                        Math.max(new Random().nextInt(StarterPoke.getLevel()-5,StarterPoke.getLevel()+4),1));
             }
 
-            boolean f = true;
-            while (f) {
-                f = StarterPoke.attackPokemon(EnemyPokemon);
+            BATTLE: while (true) {
+                System.out.printf("YOU:%s%n  HEALTH:%s%n  ATTACK:%s%n  LEVEL:%s%nENEMY:%s%n  HEALTH:%s%n  ATTACK:%s%n  LEVEL:%s%n%n",
+                        StarterPoke.getType(), StarterPoke.getHealth()[0], StarterPoke.getAttack()[0], StarterPoke.getLevel(),
+                        EnemyPokemon.getType(), EnemyPokemon.getHealth()[0], EnemyPokemon.getAttack()[0], EnemyPokemon.getLevel());
+                if (!StarterPoke.attackPokemon(EnemyPokemon)) {
+                    System.out.print("(A)ttack or (R)un?\n>>> ");
+                    String cmd = input.nextLine().toLowerCase();
+                    switch (cmd) {
+                        case "r", "run":
+                            break BATTLE;
+                    }
+                }
+                else {
+                    if (StarterPoke.getHealth()[0] == 0) {
+                        System.out.printf("Your %s Has Been Defeated! Game Over!%n", StarterPoke.getType());
+                        System.exit(0);
+                    }
+                    else {
+                        System.out.printf("Enemy %s Defeated!%n  NEW LEVEL:%s%n  NEW EXP:%s%n  EXP TO NEXT LEVEL:%s%n", EnemyPokemon.getType(), StarterPoke.getLevel(), StarterPoke.getExperience()[0], StarterPoke.getExperience()[1]);
+                        break BATTLE;
+                    }
+                }
             }
-            break;
+
+            System.out.print("Fight New Enemy? (y/n)\n>>> ");
+            String cmd = input.nextLine().toLowerCase();
+            if ("n".equals(cmd)) {
+                break;
+            }
+
         }
     }
 }

@@ -37,22 +37,32 @@ public class Pokemon {
     }
 
     public boolean attackPokemon(Pokemon otherPoke) {
-        System.out.printf("%s %s is attacking %s %s%n", _type, health[0], otherPoke.getType(), otherPoke.getHealth()[0]);
         double offMult = (effective.contains(otherPoke.getType()))?2:( (weak.contains(otherPoke.getType()))?0.5:1f );
         double defMult = (otherPoke.effective.contains(_type))?2:( (otherPoke.weak.contains(_type))?0.5:1f );
-        otherPoke.setHealth(Math.max(otherPoke.getHealth()[0] - (int)Math.max((attack[0] - otherPoke.getDefense()[0])*offMult, 0),0));
+        int yourDmg = (int)Math.max((attack[0] - otherPoke.getDefense()[0])*offMult, 0);
+        otherPoke.setHealth(Math.max(otherPoke.getHealth()[0] - yourDmg,0));
+        System.out.printf("Your %s Has Dealt %s Damage! Enemy %s Has %s Health Remaining.%n", _type, yourDmg, otherPoke.getType(), otherPoke.getHealth()[0]);
+
         if (otherPoke.getHealth()[0] <= 0) {
             experience[0] += (otherPoke.getExperience()[2]*(otherPoke.getLevel() / level)) + level;
             levelUp();
-            return false;
+
+            return true;
         }
-        else { health[0] = Math.max(health[0] - (int)Math.max((otherPoke.getAttack()[0] - defense[0])*defMult, 0), 0); }
-        if (health[0] <= 0) {
-            otherPoke.setExperience(otherPoke.getExperience()[0] + (experience[2]*(level / otherPoke.getLevel())) + level);
-            otherPoke.levelUp();
-            return false;
+        else {
+            int enemDmg = (int)Math.max((otherPoke.getAttack()[0] - defense[0])*defMult, 0);
+            health[0] = Math.max(health[0] - enemDmg, 0);
+            System.out.printf("Enemy %s Has Dealt %s Damage! Your %s Has %s Health Remaining.%n", otherPoke.getType(), enemDmg, _type, health[0]);
+
+            if (health[0] <= 0) {
+                otherPoke.setExperience(otherPoke.getExperience()[0] + (experience[2]*(level / otherPoke.getLevel())) + level);
+                otherPoke.levelUp();
+
+                return true;
+            }
         }
-        return true;
+
+        return false;
     }
 
 
