@@ -41,6 +41,13 @@ public class Interface {
             Assert.assertEquals("Grade Check Failed: Value A",          (Character) 'A', CheckFunction.apply((T) (Character.valueOf('A'))));
             Assert.assertEquals("Grade Check Failed: Extreme A",        (Character) 'A', CheckFunction.apply((T) (Integer.valueOf(200))));
             Assert.assertEquals("Grade Check Failed: Abnormal String",  (Character) 'X', CheckFunction.apply((T) "X"));
+
+
+        /* Uncomment the below lines to test various invalid Types, or add another with the same format */
+            // Assert.assertEquals("Grade Check Failed: Abnormal Data Type",  (Character) '-', CheckFunction.apply((T) Boolean.valueOf(false)));
+            // Assert.assertEquals("Grade Check Failed: Abnormal Data Tpe", (Character) '-', CheckFunction.apply((T) new StringBuilder()));
+            // Assert.assertEquals("Grade Check Failed: Abnormal Data Tpe", (Character) '-', CheckFunction.apply((T) new Exception()));
+
         }
         // This will only be thrown if a type unable to be cast to T is used; likely only primitives
         catch (ClassCastException exception) {
@@ -49,7 +56,7 @@ public class Interface {
             };
         }
 
-        // Return a Throwable exception with a positive test message to cleanly handle successfull tests
+        // Return a Throwable exception with a positive test message to cleanly handle successful tests
         return () -> {
             throw new Throwable("All Checks Passed Successfully");
         };

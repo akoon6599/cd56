@@ -75,7 +75,7 @@ public class Grading {
                 return improvedLetterGrade(Math.round(Float.parseFloat(origGrade.toString())));
             }
             // In the case of any other type, declare a malformed data entry
-            default -> throw new GradeException("Grade Check Failed: Abnormal Data Value", origGrade.getClass().toString());
+            default -> throw new GradeException("Grade Check Failed: Abnormal Data Type", origGrade.getClass().toString());
         }
     }
 }
