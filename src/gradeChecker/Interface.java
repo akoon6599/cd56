@@ -25,7 +25,8 @@ public class Interface {
     @SuppressWarnings("unchecked cast")
     public static <T> ThrowingRunnable testValue(Function<T,Character> CheckFunction) throws AssertionError {
         try {
-            Assert.assertEquals("Grade Check Failed: Extreme F",        (Character) 'F', CheckFunction.apply((T) (Float.valueOf(12.3f))));
+            Assert.assertEquals("Grade Check Failed: Value X",          (Character) 'X', CheckFunction.apply((T) (Integer.valueOf(0))));
+            Assert.assertEquals("Grade Check Failed: Extreme F",        (Character) 'F', CheckFunction.apply((T) (Float.valueOf(1))));
             Assert.assertEquals("Grade Check Failed: Value F",          (Character) 'F', CheckFunction.apply((T) (Character.valueOf('F'))));
             Assert.assertEquals("Grade Check Failed: HLimit F",         (Character) 'F', CheckFunction.apply((T) (Integer.valueOf(59))));
             Assert.assertEquals("Grade Check Failed: LLimit D",         (Character) 'D', CheckFunction.apply((T) (Integer.valueOf(60))));
@@ -44,8 +45,8 @@ public class Interface {
 
 
         /* Uncomment the below lines to test various invalid Types, or add another with the same format */
-            // Assert.assertEquals("Grade Check Failed: Abnormal Data Type",  (Character) '-', CheckFunction.apply((T) Boolean.valueOf(false)));
-            // Assert.assertEquals("Grade Check Failed: Abnormal Data Tpe", (Character) '-', CheckFunction.apply((T) new StringBuilder()));
+//             Assert.assertEquals("Grade Check Failed: Abnormal Data Type",  (Character) '-', CheckFunction.apply((T) Boolean.valueOf(false)));
+//             Assert.assertEquals("Grade Check Failed: Abnormal Data Tpe", (Character) '-', CheckFunction.apply((T) new StringBuilder()));
             // Assert.assertEquals("Grade Check Failed: Abnormal Data Tpe", (Character) '-', CheckFunction.apply((T) new Exception()));
 
         }

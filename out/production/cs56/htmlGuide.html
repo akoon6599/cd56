@@ -3,12 +3,50 @@
 
 
 <head>
+  <title>My HTML Page!</title>
+  <style>
+    div#bluediv {
+      background-color: skyblue;
+    }
+    .rightjust {
+      text-align: right;
+    }
+    .container-2col {
+      display:flex;
+      flex-direction: row;
+    }
+    .col-left {
+      margin: 50px;
+      background-color: coral;
+    }
+    .col-right {
+      padding: 50px;
+      background-color: lightgreen;
+    }
+    [class*="col"] {
+      font-size: 36px;
+    }
+  </style>
 </head>
 <body>
-<div>
+<div id="bluediv" class="rightjust">
   Hello there!
 </div>
+<div class="rightjust">
+  2nd div
+</div>
+<p class="rightjust">
+  This is a paragraph
+</p>
 </body>
+<div class="container-2col">
+  <div class="col-left rightjust">
+    left column
+  </div>
+  <div class="col-right">
+    right column
+  </div>
+</div>
 
 
 
