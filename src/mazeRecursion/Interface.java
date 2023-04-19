@@ -19,12 +19,12 @@ public class Interface {
     public static void main(String[] args) {
         Map mainMap = new Map(
                 """
-                .........c
+                m........c
                 .####.####
                 ......####
                 #####.####
                 ####..####
-                ####.m####
+                ####..####
                 .###.#####
                 c....#####
                 ###.######
@@ -37,7 +37,7 @@ public class Interface {
 
     private static void solve(Map mainMap) {
         // Edit here to change which cheese to find
-        int num = 0;
+        int num = 2;
 
         System.out.println("       # Character Map #");
         mainMap.print(false);
@@ -49,11 +49,13 @@ public class Interface {
 
         HashMap<Integer, Integer[]> pathHistory = new HashMap<>();
         pathHistory.put(0, mainMap.startPosition);
-        mainMap.solveMap(0, pathHistory);
+        pathHistory = mainMap.solveMap(0, pathHistory);
+        mainMap.map.get(mainMap.startPosition[0]).get(mainMap.startPosition[1]).idealPath = true;
 
         System.out.println();
         System.out.println("       #   Solved Map  #");
         mainMap.print(false);
+        System.out.printf("     # %d Steps to Solve #", pathHistory.size()-1);
     }
 
 }
@@ -78,7 +80,6 @@ class Map {
         for (int i = 0; i<map.size(); i++) {
             for (int j = 0; j<map.get(i).size(); j++) {
                 if (map.get(i).get(j).type == MapCell.CellType.START) {
-                    map.get(i).get(j).idealPath = true;
                     startPosition = new Integer[] {i, j};
                 }
                 else if (map.get(i).get(j).type == MapCell.CellType.CHEESE) {
