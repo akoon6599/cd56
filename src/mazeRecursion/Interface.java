@@ -1,9 +1,8 @@
 package mazeRecursion;
 
 import java.util.*;
-import java.util.random.RandomGenerator;
+import java.util.List;
 import java.util.stream.Collectors;
-
 
 /*
  * Write a method that starts at the mouse's position
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class Interface {
     public static void main(String[] args) {
-        Map map = new Map(
+        Map mainMap = new Map(
                 """
                 .........c
                 .####.####
@@ -32,158 +31,139 @@ public class Interface {
                 ###c######
                 """
         );
-        map.print();
 
-        HashMap<Integer, Movement> moves;
-        moves = map.solveMap(0, null);
-        moves.values().forEach((movement) -> map.mapString.get(movement.absolutePosition[0]).set(movement.absolutePosition[1], "-"));
-
-        for (List<String> row : map.mapString) {
-            for (String cell : row) {
-                System.out.print(cell);
-            }
-            System.out.println();
-        }
-//        map.mapArray.get(map.startPosition[0]).forEach((x) -> System.out.println(x.type));
+        solve(mainMap);
     }
 
-}
+    private static void solve(Map mainMap) {
+        // Edit here to change which cheese to find
+        int num = 0;
 
-class Movement {
-    int weight;
-    int[] relativePosition;
-    int[] absolutePosition;
+        System.out.println("       # Character Map #");
+        mainMap.print(false);
+        System.out.println();
+        System.out.printf("     # Solving:  Answer %d #%n", num);
+        System.out.println("       #  Weights Map  #");
+        mainMap.assignWeights(0, mainMap.endPositions.get(num));
+        mainMap.print(true);
 
-    public Movement(int weight, int relRow, int relCol, int absRow, int absCol) {
-        this.weight = weight;
-        this.relativePosition = new int[] {relRow, relCol};
-        this.absolutePosition = new int[] {absRow, absCol};
+        HashMap<Integer, Integer[]> pathHistory = new HashMap<>();
+        pathHistory.put(0, mainMap.startPosition);
+        mainMap.solveMap(0, pathHistory);
+
+        System.out.println();
+        System.out.println("       #   Solved Map  #");
+        mainMap.print(false);
     }
-    public int getWeight() {return weight;}
+
 }
 
 class Map {
-    public List<List<String>> mapString = new ArrayList<>();
-
-    public List<List<MapCell>> mapArray = new ArrayList<>();
-    public int[] startPosition;
-    public int[] curPosition;
-
-    public HashMap<Integer, Movement> solveMap(int movementNumber, HashMap<Integer, Movement> movementChain) {
-        curPosition = getLocationOf(MapCell.CellType.START);
-        ArrayList<Movement> possibleMoves = checkNearbyCells(curPosition[0], curPosition[1]);
-
-        for (Movement m : possibleMoves) {
-            System.out.println(m.weight);
-        }
-
-        Integer[] weights = possibleMoves.stream().map(Movement::getWeight).toList().toArray(new Integer[1]);
-        int maxWeightIndex = RandomGenerator.getDefault().nextInt(0,weights.length);
-        for (int i=0; i<weights.length;i++) {
-            System.out.println(Arrays.toString(weights));
-            System.out.println(i);
-            maxWeightIndex = weights[i] > weights[maxWeightIndex] ? i : maxWeightIndex;
-        }
-
-
-        MapCell oldCell = mapArray.get(curPosition[0]).get(curPosition[1]);
-        oldCell.explored = true;
-        oldCell.type = MapCell.CellType.FLOOR;
-        Movement move = possibleMoves.get(maxWeightIndex);
-
-        int newRow = curPosition[0] + move.relativePosition[0];
-        int newCol = curPosition[1] + move.relativePosition[1];
-
-        possibleMoves.forEach((x) -> System.out.println(Arrays.toString(x.relativePosition)));
-        MapCell newCell = mapArray.get(newRow).get(newCol);
-
-        if (Objects.nonNull(movementChain)) {movementChain.put(movementNumber, move);}
-        else {
-            movementChain = new HashMap<>();
-            movementChain.put(movementNumber, move);
-        }
-
-
-
-
-        if (newCell.type == MapCell.CellType.CHEESE) {return movementChain;}
-        else if (movementNumber >= 50) {return movementChain;}
-        else {
-            newCell.type = MapCell.CellType.START;
-            return solveMap(movementNumber+1, movementChain);
-        }
-    }
-
-    public int[] getLocationOf(MapCell.CellType type) {
-        int rowNum = 0;
-        int colNum = 0;
-        for (List<MapCell> row : mapArray) {
-            for (MapCell cell : row) {
-                if (cell.type == type) {
-                    rowNum = mapArray.indexOf(row);
-                    colNum = row.indexOf(cell);
-                }
-            }
-        }
-
-        return new int[] {rowNum, colNum};
-    }
-
+    public List<List<MapCell>> map = new ArrayList<>(10);
+    public Integer[] startPosition;
+    public HashMap<Integer, Integer[]> endPositions = new HashMap<>();
     public Map(String strMap) {
         strMap = strMap.strip();
         String[] splitMap = strMap.split("\n");
-
         for (String s : splitMap) {
-            String[] rowSplit = s.split("");
-            mapArray.add(
-                    Arrays.stream(rowSplit).map(MapCell::new).collect(Collectors.toList())
+            map.add(
+                    Arrays.stream(
+                                    s.split("")
+                            )
+                            .map(MapCell::new)
+                            .collect(Collectors.toCollection(ArrayList::new))
             );
-            mapString.add(Arrays.stream(rowSplit).collect(Collectors.toList()));
         }
-
-        startPosition = getLocationOf(MapCell.CellType.START);
+        int endCount = 0;
+        for (int i = 0; i<map.size(); i++) {
+            for (int j = 0; j<map.get(i).size(); j++) {
+                if (map.get(i).get(j).type == MapCell.CellType.START) {
+                    map.get(i).get(j).idealPath = true;
+                    startPosition = new Integer[] {i, j};
+                }
+                else if (map.get(i).get(j).type == MapCell.CellType.CHEESE) {
+                    endPositions.put(endCount, new Integer[] {i,j});
+                    endCount++;
+                }
+                map.get(i).get(j).position = new Integer[] {i,j};
+            }
+        }
     }
 
-    public ArrayList<Movement> checkNearbyCells(int rowIndex, int columnIndex) {
-        ArrayList<Movement> options = new ArrayList<>();
+    public void print(boolean weights) {
+        for (List<MapCell> row: map) {
+            for (MapCell cell: row) {
+                if (!weights) {cell.print();}
+                else {cell.printWeightMap();}
+            }
+            System.out.println();
+        }
+    }
 
-        for (int dRow=-1;dRow<=1;dRow++) {
-            for (int dCol=-1;dCol<=1;dCol++) {
-                int newRow = rowIndex+dRow;
-                int newCol = columnIndex+dCol;
+    public void assignWeights(int prevWeight, Integer[] startPosition) {
+        ArrayList<MapCell> nearbyCells = getNearbyCells(startPosition);
 
-                if ((newRow < mapArray.size() && newRow > -1) && (newCol < mapArray.get(0).size() && newCol > -1)) {
-                    MapCell cell = mapArray.get(newRow).get(newCol);
+        for (MapCell cell : nearbyCells) {
+            if (cell.type != MapCell.CellType.WALL && (Objects.equals(cell.weight, "x") || Integer.parseInt(cell.weight) > prevWeight) && prevWeight <= 50) {
+               cell.weight = Integer.toString(prevWeight+1);
+                if (cell.type == MapCell.CellType.CHEESE) {
+                    cell.weight = Integer.toString(-1);
+                }
+                if (cell.position != startPosition) {
+                    assignWeights(prevWeight + 1, cell.position);
+                }
+            }
+        }
+    }
 
-                    if (cell.type != MapCell.CellType.WALL && !(dRow == 0 && dCol == 0)) {
-                        int weight = cell.explored ? -1 : 0;
-                        weight += cell.type == MapCell.CellType.CHEESE ? 10 : 0;
+    public HashMap<Integer, Integer[]> solveMap(int depth, HashMap<Integer, Integer[]> pathHistory) {
+        ArrayList<MapCell> nearbyCells = getNearbyCells(pathHistory.get(depth));
 
-                        options.add(new Movement(weight, dRow, dCol, newRow, newCol));
-                    }
+        int lowestAt = 0;
+        for (int i=0; i<nearbyCells.size(); i++) {
+            if (!nearbyCells.get(i).weight.equals("x")) {
+                if (nearbyCells.get(lowestAt).weight.equals("x")) {lowestAt = i;}
+                else {
+                    lowestAt = Integer.parseInt(nearbyCells.get(i).weight) < Integer.parseInt(nearbyCells.get(lowestAt).weight) ? i : lowestAt;
                 }
             }
         }
 
-        return options;
+        depth++;
+        pathHistory.put(depth, nearbyCells.get(lowestAt).position);
+        nearbyCells.get(lowestAt).idealPath = true;
+
+        if (nearbyCells.get(lowestAt).type == MapCell.CellType.CHEESE) {
+            return pathHistory;
+        }
+        else {
+            return solveMap(depth, pathHistory);
+        }
     }
 
-    public void print() {
-        for (List<MapCell> row: mapArray) {
-            for (MapCell cell: row) {
-                cell.print();
+    private ArrayList<MapCell> getNearbyCells(Integer[] position) {
+        ArrayList<MapCell> nearbyCells = new ArrayList<>();
+        for (int i=-1;i<=1;i++) {
+            for (int j=-1;j<=1;j++) {
+                int newRow = position[0]+i;
+                int newCol = position[1]+j;
+                if ((newRow != -1 && newRow != map.size()) &&
+                        (newCol != -1  && newCol != map.get(0).size())) {
+                    nearbyCells.add(map.get(newRow).get(newCol));
+                }
             }
-            System.out.println();
         }
-        System.out.println();
+    return nearbyCells;
     }
 }
 
 class MapCell {
     public enum CellType {WALL, FLOOR, CHEESE, START}
-    public boolean explored = false;
     public CellType type;
     public char repr;
+    public String weight = "x";
+    public Integer[] position;
+    public boolean idealPath = false;
     public MapCell(String mapChar) {
         repr = mapChar.charAt(0);
         switch (mapChar) {
@@ -194,7 +174,12 @@ class MapCell {
         }
     }
     public void print() {
-        System.out.print(repr);
+        if (idealPath && type == CellType.START) {System.out.print("  +");}
+        else if (idealPath && type == CellType.CHEESE) {System.out.print("  *");}
+        else if (idealPath) {System.out.print("  O");}
+        else {System.out.printf("  %s",repr);}
+    }
+    public void printWeightMap() {
+        System.out.printf(" %s", weight.length()==1 ? " "+weight : weight);
     }
 }
-
