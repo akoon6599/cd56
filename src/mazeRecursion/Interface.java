@@ -27,7 +27,7 @@ public class Interface {
                 ####..####
                 .###.#####
                 c....#####
-                ###.######
+                #c#.######
                 ###c######
                 """
         );
@@ -37,7 +37,7 @@ public class Interface {
 
     private static void solve(Map mainMap) {
         // Edit here to change which cheese to find
-        int num = 2;
+        int num = 3;
 
         System.out.println("       # Character Map #");
         mainMap.print(false);
@@ -107,7 +107,7 @@ class Map {
         for (MapCell cell : nearbyCells) {
             if (cell.type != MapCell.CellType.WALL && (Objects.equals(cell.weight, "x") || Integer.parseInt(cell.weight) > prevWeight) && prevWeight <= 50) {
                cell.weight = Integer.toString(prevWeight+1);
-                if (cell.type == MapCell.CellType.CHEESE) {
+                if (cell.type == MapCell.CellType.CHEESE && (Objects.equals(cell.position[1], startPosition[1]) && Objects.equals(cell.position[0], startPosition[0]))) {
                     cell.weight = Integer.toString(-1);
                 }
                 if (cell.position != startPosition) {
