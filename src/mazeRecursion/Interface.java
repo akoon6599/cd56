@@ -19,16 +19,15 @@ public class Interface {
     public static void main(String[] args) {
         Map mainMap = new Map(
                 """
-                ..........
-                .####.####
-                ..c...####
-                #####.####
-                ####..####
-                ####m.####
-                c###.#####
-                .....#####
-                #.#.######
-                ###c######
+                m........
+                ..#####..
+                .#.###.#.
+                .##.#.##.
+                .###.###c
+                .##.#.##.
+                .#.###.#.
+                ..#####..
+                .#######.
                 """
         );
 
@@ -36,6 +35,7 @@ public class Interface {
     }
 
     // Solve Map for specific solution
+
     private static void solve(int num, Map mainMap) {
         // Format map displays
         System.out.println("       # Character Map #");
@@ -45,7 +45,7 @@ public class Interface {
         System.out.println("       #  Weights Map  #");
 
         // Calculate weights for each cell
-        mainMap.assignWeights(0, mainMap.endPositions.get(num));
+        mainMap.assignWeights(0, mainMap.endPositions.get(num-1));
         mainMap.print(true);
 
         // Find the optimal path
@@ -66,7 +66,7 @@ public class Interface {
         System.out.println("       # Character Map #");
         mainMap.print(false);
         System.out.println();
-        System.out.println("   # Solving General Solution #");
+        System.out.println("  # Solving General Solution #");
         System.out.println("       #  Weights Map  #");
 
         // Calculate weights for each cell
@@ -183,12 +183,12 @@ class Map {
     // Return a list of all adjacent cells
     private ArrayList<MapCell> getNearbyCells(Integer[] position) {
         ArrayList<MapCell> nearbyCells = new ArrayList<>();
-        for (int i=-1;i<=1;i++) {
-            for (int j=-1;j<=1;j++) {
-                int newRow = position[0]+i;
-                int newCol = position[1]+j;
+        for (int dRow=-1;dRow<=1;dRow++) {
+            for (int dCol=-1;dCol<=1;dCol++) {
+                int newRow = position[0]+dRow;
+                int newCol = position[1]+dCol;
                 if ((newRow != -1 && newRow != map.size()) &&
-                        (newCol != -1  && newCol != map.get(0).size())) {
+                        (newCol != -1  && newCol != map.get(newRow).size())) {
                     nearbyCells.add(map.get(newRow).get(newCol));
                 }
             }
